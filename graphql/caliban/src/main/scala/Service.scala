@@ -21,6 +21,7 @@ object Service {
 
     val posts: Task[List[Post]] = {
       val uri = URI.create(BaseUrl + "/posts")
+      println(s"Fetching posts from $uri")
       client.get[List[Post]](uri)
     }
 
@@ -33,6 +34,7 @@ object Service {
       private case class Req(id: Int) extends Request[Throwable, User]
 
       private val usersDS = DataSource.fromFunctionZIO("UsersDataSource") { (req: Req) =>
+        println(s"Fetching user with id ${req.id}")
         client.get[User](URI.create(BaseUrl + "/users/" + req.id))
       }
 

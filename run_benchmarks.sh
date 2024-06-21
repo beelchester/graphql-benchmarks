@@ -13,8 +13,8 @@ function killServerOnPort() {
     fi
 }
 allResults=()
-killServerOnPort 3000
-sh nginx/run.sh
+# killServerOnPort 3000
+# sh nginx/run.sh
 
 function runBenchmark() {
     killServerOnPort 8000

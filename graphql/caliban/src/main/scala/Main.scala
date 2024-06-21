@@ -8,6 +8,9 @@ object Main extends ZIOAppDefault {
     Runtime.removeDefaultLoggers ++ Runtime.disableFlags(RuntimeFlag.FiberRoots)
 
   private val api = graphQL(RootResolver(Query(Service.posts)))
+  // print the schema to the console
+  println(api.render)
+  println("http://localhost:8000/graphql")
   def run =
     api
       .runServer(8000, apiPath = "/graphql")

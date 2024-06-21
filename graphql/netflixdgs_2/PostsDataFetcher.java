@@ -42,6 +42,7 @@ public class PostsDataFetcher {
 
     List<CompletableFuture<Void>> futures = posts.stream()
         .map(post -> {
+        // System.out.println("loading user for post: " + post.getUserId());
         return userDataLoader.load(post.getUserId()).thenAccept(user -> post.setUser(user));
         })
         .collect(Collectors.toList());
