@@ -36,10 +36,10 @@ public class AppConfig {
             }
         };
         
-        // final HttpHost proxy = new HttpHost("127.0.0.1", 3000);        
-        // final DefaultProxyRoutePlanner routePlanner = new DefaultProxyRoutePlanner(proxy);
+        final HttpHost proxy = new HttpHost("127.0.0.1", 3000);        
+        final DefaultProxyRoutePlanner routePlanner = new DefaultProxyRoutePlanner(proxy);
         final CloseableHttpClient httpClient = HttpClients.custom()
-        		// .setRoutePlanner(routePlanner)
+        		.setRoutePlanner(routePlanner)
                 .setConnectionManager(connectionManager)
                 .setConnectionManagerShared(true)
                 .setKeepAliveStrategy(keepAliveStrategy)

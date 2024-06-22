@@ -57,6 +57,11 @@ const resolvers = {
 		posts: async () => {
 			try {
 				const response = await axiosInstance.get('http://jsonplaceholder.typicode.com/posts', {
+					proxy: {
+						protocol: 'http',
+						host: '127.0.0.1',
+						port: 3000
+					},
 				});
 				return response.data;
 			} catch (error) {

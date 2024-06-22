@@ -114,6 +114,7 @@ impl QueryRoot {
 #[tokio::main]
 async fn main() {
     let client = reqwest::ClientBuilder::new()
+        .proxy(Proxy::all("http://127.0.0.1:3000").unwrap())
         .tcp_keepalive(Some(Duration::from_secs(60)))
         .tcp_nodelay(true)
         .no_gzip()

@@ -38,7 +38,7 @@ object Client {
         .succeed {
           HttpAsyncClients
             .custom()
-            // .setProxy(new HttpHost("http", "127.0.0.1", 3000))
+            .setProxy(new HttpHost("http", "127.0.0.1", 3000))
             .setConnectionManager({
               PoolingAsyncClientConnectionManagerBuilder
                 .create()
