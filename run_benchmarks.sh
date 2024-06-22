@@ -48,20 +48,20 @@ function runBenchmark() {
     done
 }
 
-runBenchmark "graphql/apollo_server/run.sh"
-cd graphql/apollo_server/
-npm stop
-cd ../../
+# runBenchmark "graphql/apollo_server/run.sh"
+# cd graphql/apollo_server/
+# npm stop
+# cd ../../
 
-runBenchmark "graphql/caliban/run.sh"
+# runBenchmark "graphql/caliban/run.sh"
 
-runBenchmark "graphql/netflix_dgs/run.sh"
+# runBenchmark "graphql/netflix_dgs/run.sh"
 
-runBenchmark "graphql/gqlgen/run.sh"
+# runBenchmark "graphql/gqlgen/run.sh"
 
 runBenchmark "graphql/tailcall/run.sh"
 
-runBenchmark "graphql/async_graphql/run.sh"
+# runBenchmark "graphql/async_graphql/run.sh"
 
 # Now, analyze all results together
 bash analyze.sh "${allResults[@]}"

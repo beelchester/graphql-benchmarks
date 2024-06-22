@@ -6,3 +6,4 @@ current_dir=$(pwd)
 
 # Start nginx using the configuration file from the current directory
 nginx -c "$current_dir/nginx/nginx.conf"
+echo "Started nginx"
