@@ -5,7 +5,7 @@ on:
     types: [assigned, opened, synchronize, reopened, edited]
   push:
     branches:
-      - test_k6_ci
+      - main
 
 permissions:
   contents: write
@@ -14,7 +14,7 @@ permissions:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: benchmarking-runner
     if: github.event.head_commit.message != 'Update performance results in README.md'
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -24,6 +24,9 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           ref: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.sha || github.sha }}
+      - name: Set IS_PUSH environment variable
+        if: github.ref == 'refs/heads/main'
+        run: echo "IS_PUSH=true" >> $GITHUB_ENV
 
       - name: Build devcontainer
         uses: devcontainers/ci@v0.3
@@ -35,7 +38,10 @@ jobs:
         uses: grafana/setup-k6-action@v1
 
       - name: Run benchmarks
+        env:
+          IS_PUSH: ${{ env.IS_PUSH }}
         run: |
+          echo "IS_PUSH is set to $IS_PUSH"
           bash ./setup.sh
           bash ./run_benchmarks.sh
 
