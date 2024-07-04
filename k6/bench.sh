@@ -1,7 +1,7 @@
 test_name=$1
 benchmark=$2
 
-if [ "$IS_PUSH" = "true" ]; then
+if [ "$IS_CLOUD_ENABLED" == "true" ]; then
   echo "Cloud enabled"
   k6 run k6/bench.js --quiet --out cloud --env TEST_NAME=$test_name --env BENCHMARK=$benchmark
 else

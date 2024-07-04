@@ -27,7 +27,12 @@ jobs:
           ref: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.sha || github.sha }}
       - name: Setup push environment
         if: github.event_name == 'push' && github.ref == 'refs/heads/test_k6_ci'
-        run: echo "IS_PUSH=true" >> $GITHUB_ENV
+        run: |
+          if [ -z "$K6_CLOUD_API_TOKEN" ]; then
+            echo "K6_CLOUD_API_TOKEN is not set, results will not be uploaded to k6 cloud"
+          else
+            echo "IS_CLOUD_ENABLED=true" >> $GITHUB_ENV
+          fi
 
       - name: Build devcontainer
         uses: devcontainers/ci@v0.3
@@ -40,14 +45,9 @@ jobs:
 
       - name: Run benchmarks
         env:
-          IS_PUSH: ${{ env.IS_PUSH }}
-          K6_CLOUD_API_TOKEN: ${{ secrets.K6_CLOUD_API_TOKEN }}
+          IS_CLOUD_ENABLED: ${{ env.IS_CLOUD_ENABLED }}
         run: |
-          echo "IS_PUSH is set to $IS_PUSH"
-          if [ -z "$K6_CLOUD_API_TOKEN" ]; then
-            echo "K6_CLOUD_API_TOKEN is not set, results will not be uploaded to k6 cloud"
-            echo "IS_PUSH=false" >> $GITHUB_ENV
-          fi
+          echo "IS_CLOUD_ENABLED is set to $IS_CLOUD_ENABLED"
           bash ./setup.sh
           bash ./run_benchmarks.sh
 
