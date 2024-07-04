@@ -42,12 +42,11 @@ jobs:
             echo "K6_CLOUD_API_TOKEN is not set, results will not be uploaded to k6 cloud"
           else
             k6 login cloud --token $K6_CLOUD_API_TOKEN
-            echo "IS_CLOUD_ENABLED=true" >> $GITHUB_ENV
+            echo "IS_K6_CLOUD_ENABLED=true" >> $GITHUB_ENV
           fi
 
       - name: Run benchmarks
         run: |
-          echo "IS_CLOUD_ENABLED is set to $IS_CLOUD_ENABLED"
           bash ./setup.sh
           bash ./run_benchmarks.sh
 
