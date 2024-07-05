@@ -69,7 +69,7 @@ function runBenchmark() {
 
 rm "results.md"
 
-for service in "apollo_server" "caliban" "netflix_dgs" "gqlgen" "tailcall" "async_graphql"; do
+for service in "hasura"; do
     runBenchmark "$service"
     if [ "$service" == "apollo_server" ]; then
         cd graphql/apollo_server/
