@@ -10,14 +10,13 @@ docker network create graphql_network
 
 # Start PostgreSQL container
 docker run -d --name postgres \
-  --network graphql_network \
   -e POSTGRES_USER=$DB_USER \
   -e POSTGRES_PASSWORD=$DB_PASSWORD \
   -e POSTGRES_DB=$DB_NAME \
   -p $DB_PORT:5432 \
   postgres:13
 
-DB_HOST=localhost
+DB_HOST=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' postgres)
 
 # Wait for PostgreSQL to be ready
 echo "Waiting for PostgreSQL to be ready..."
@@ -28,7 +27,6 @@ echo "PostgreSQL is ready!"
 
 # Start Hasura GraphQL Engine container
 docker run -d --name graphql-engine \
-  --network graphql_network \
   -e HASURA_GRAPHQL_DATABASE_URL=postgres://$DB_USER:$DB_PASSWORD@postgres:$DB_PORT/$DB_NAME \
   -e HASURA_GRAPHQL_ENABLE_CONSOLE=false \
   -e HASURA_GRAPHQL_ENABLED_LOG_TYPES=startup,http-log,webhook-log,websocket-log,query-log \
@@ -40,11 +38,13 @@ docker run -d --name graphql-engine \
 HASURA_URL=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' graphql-engine)
 
 docker run -d --name handler \
-  --network graphql_network \
   -e port=4000 \
   -v $(pwd)/graphql/hasura:/usr/src/app \
   -w /usr/src/app \
   node:14 bash -c "npm install && node handler.js"
+
+HANDLER_URL=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' handler)
+echo "Handler URL: $HANDLER_URL"
 
 # Create and insert data into PostgreSQL
 psql "postgresql://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME" <<EOF
