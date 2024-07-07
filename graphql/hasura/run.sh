@@ -23,6 +23,9 @@ until docker exec postgres pg_isready -U $DB_USER -d $DB_NAME -h $DB_HOST; do
 done
 echo "PostgreSQL is ready!"
 
+echo "$(pwd)/graphql/hasura"
+ls -la $(pwd)/graphql/hasura
+
 docker run -d --name handler \
   -p 4000:4000 \
   -v $(pwd)/graphql/hasura:/var/hasura \
