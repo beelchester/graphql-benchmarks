@@ -17,7 +17,7 @@ docker run -d --name postgres \
   -p $DB_PORT:5432 \
   postgres:13
 
-DB_HOST=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' postgres)
+DB_HOST=localhost
 
 # Wait for PostgreSQL to be ready
 echo "Waiting for PostgreSQL to be ready..."
