@@ -51,7 +51,7 @@ HASURA_URL=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}
 echo "Hasura URL: $HASURA_URL"
 
 # debuging why graphql-engine dont have access to handler
-docker network inspect graphql_network
+docker network inspect host
 
 # Create and insert data into PostgreSQL
 docker exec -i postgres psql -U $DB_USER -d $DB_NAME <<EOF
