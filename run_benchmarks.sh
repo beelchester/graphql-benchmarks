@@ -23,7 +23,7 @@ function runBenchmark() {
     killServerOnPort 4000
     sleep 5
     local serviceScript="$1"
-    local benchmarks=(1 2 3)
+    local benchmarks=(3)
 
   if [[ "$serviceScript" == *"hasura"* ]]; then
     bash "$serviceScript" # Run synchronously without background process
@@ -31,7 +31,6 @@ function runBenchmark() {
     bash "$serviceScript" & # Run in daemon mode
   fi
 
-  sleep 15 # Give some time for the service to start up
 
   local graphqlEndpoint="http://localhost:8000/graphql"
   if [[ "$serviceScript" == *"hasura"* ]]; then
@@ -49,12 +48,6 @@ function runBenchmark() {
     bash "test_query${bench}.sh" "$graphqlEndpoint"
 
     # Warmup run
-    bash "$benchmarkScript" "$graphqlEndpoint" "$bench" >/dev/null
-    sleep 1 # Give some time for apps to finish in-flight requests from warmup
-    bash "$benchmarkScript" "$graphqlEndpoint" "$bench" >/dev/null
-    sleep 1
-    bash "$benchmarkScript" "$graphqlEndpoint" "$bench" >/dev/null
-    sleep 1
 
         # 3 benchmark runs
         for resultFile in "${resultFiles[@]}"; do
@@ -73,17 +66,16 @@ function runBenchmark() {
 
 rm "results.md"
 
-for service in "apollo_server" "caliban" "netflix_dgs" "gqlgen" "tailcall" "async_graphql" "hasura"; do
+for service in "hasura"; do
   runBenchmark "graphql/${service}/run.sh"
   if [ "$service" == "apollo_server" ]; then
     cd graphql/apollo_server/
     npm stop
     cd ../../
   elif [ "$service" == "hasura" ]; then
+  docker logs handler
+  docker logs pinger
     bash "graphql/hasura/kill.sh"
   fi
 done
 
-bash analyze.sh "${bench1Results[@]}"
-bash analyze.sh "${bench2Results[@]}"
-bash analyze.sh "${bench3Results[@]}"

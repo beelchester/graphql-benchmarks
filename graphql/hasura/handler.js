@@ -4,6 +4,11 @@ const port = 4000;
 
 app.use(express.json());
 
+app.get('/greet', (req, res) => {
+  res.json('Hello World!');
+});
+
+
 app.post('/greet', (req, res) => {
   res.json('Hello World!');
 });

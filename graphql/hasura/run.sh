@@ -23,8 +23,26 @@ until docker exec postgres pg_isready -U $DB_USER -d $DB_NAME -h $DB_HOST; do
 done
 echo "PostgreSQL is ready!"
 
+docker run -d --name handler \
+  -p 4000:4000 \
+  -v $(pwd)/graphql/hasura:/usr/src/app \
+  -w /usr/src/app \
+  node:14 bash -c "npm install && node handler.js"
+
+HANDLER_URL=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' handler)
+HANDLER_URL="http://$HANDLER_URL:4000/greet"
+echo "Handler URL: $HANDLER_URL"
+docker logs handler
+
+# separate container to ping handler alpine container
+docker run -d --name pinger \
+  -p 3002:3002 \
+  alpine:latest sh -c "apk add curl && curl $HANDLER_URL:4000/greet"
+docker logs pinger
+
 # Start Hasura GraphQL Engine container
 docker run -d --name graphql-engine \
+  -e HASURA_GRAPHQL_ACTION_HANDLER_BASE_URL=$HANDLER_URL \
   -e HASURA_GRAPHQL_DATABASE_URL=postgres://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME \
   -e HASURA_GRAPHQL_ENABLE_CONSOLE=false \
   -e HASURA_GRAPHQL_ENABLED_LOG_TYPES=startup,http-log,webhook-log,websocket-log,query-log \
@@ -98,6 +116,5 @@ rm users.json posts.json
 # Apply Hasura metadata
 cd ./graphql/hasura
 # Run handler for greet action
-node handler.js &
 npx hasura metadata apply --endpoint http://$HASURA_URL:8080
 cd ../..
