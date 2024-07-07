@@ -32,7 +32,7 @@ ls -la /usr
 
 docker run -d --name handler \
   -p 4000:4000 \
-  -v /home/user/workspace/graphql-benchmarks/graphql/hasura:/var/hasura \
+  -v /workspaces/graphql-benchmarks/graphql/hasura:/var/hasura \
   node:14 bash -c "cd /var/hasura && ls -la && npm install && node handler.js"
 
 HANDLER_URL=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' handler)
