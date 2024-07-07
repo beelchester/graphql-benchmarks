@@ -2,4 +2,4 @@ actions:
     - name: greet
       definition:
         kind: synchronous
-        handler: http://handler:6000/greet
+        handler: http://localhost:6000/greet

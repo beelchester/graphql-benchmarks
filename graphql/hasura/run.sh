@@ -10,14 +10,15 @@ docker network create graphql_network
 
 # Start PostgreSQL container
 docker run -d --name postgres \
-  --network graphql_network \
+  --net=host \
   -e POSTGRES_USER=$DB_USER \
   -e POSTGRES_PASSWORD=$DB_PASSWORD \
   -e POSTGRES_DB=$DB_NAME \
   -p $DB_PORT:5432 \
   postgres:13
 
-DB_HOST=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' postgres)
+DB_HOST=localhost
+echo "PostgreSQL host: $DB_HOST"
 
 # Wait for PostgreSQL to be ready
 echo "Waiting for PostgreSQL to be ready..."
@@ -27,7 +28,7 @@ done
 echo "PostgreSQL is ready!"
 
 docker run -d --name handler \
-  --network graphql_network \
+  --net=host \
   -p 6000:6000 \
   -v $(pwd)/graphql/hasura:/usr/src/app \
   -w /usr/src/app \
@@ -38,13 +39,12 @@ echo "Handler URL: $HANDLER_URL"
 
 # Start Hasura GraphQL Engine container
 docker run -d --name graphql-engine \
-  --network graphql_network \
-  -e HASURA_GRAPHQL_DATABASE_URL=postgres://$DB_USER:$DB_PASSWORD@postgres:$DB_PORT/$DB_NAME \
+  --net=host \
+  -e HASURA_GRAPHQL_DATABASE_URL=postgres://$DB_USER:$DB_PASSWORD@localhost:$DB_PORT/$DB_NAME \
   -e HASURA_GRAPHQL_ENABLE_CONSOLE=false \
   -e HASURA_GRAPHQL_ENABLED_LOG_TYPES=startup,http-log,webhook-log,websocket-log,query-log \
   -e HASURA_GRAPHQL_EXPERIMENTAL_FEATURES=naming_convention \
   -e HASURA_GRAPHQL_DEFAULT_NAMING_CONVENTION=graphql-default \
-  -p 8080:8080 \
   hasura/graphql-engine:v2.40.0
 
 HASURA_URL=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' graphql-engine)
@@ -121,5 +121,5 @@ rm users.json posts.json
 
 # Apply Hasura metadata
 cd ./graphql/hasura
-npx hasura metadata apply --endpoint http://$HASURA_URL:8080
+npx hasura metadata apply
 cd ../..
