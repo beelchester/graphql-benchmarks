@@ -54,7 +54,7 @@ echo "Hasura URL: $HASURA_URL"
 docker network inspect graphql_network
 
 # Create and insert data into PostgreSQL
-psql "postgresql://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME" <<EOF
+docker exec -i postgres psql -U $DB_USER -d $DB_NAME <<EOF
 CREATE SCHEMA IF NOT EXISTS public;
 
 DROP TABLE IF EXISTS public.posts;
