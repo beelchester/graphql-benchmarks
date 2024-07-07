@@ -39,7 +39,7 @@ echo "Handler URL: $HANDLER_URL"
 # Start Hasura GraphQL Engine container
 docker run -d --name graphql-engine \
   --network graphql_network \
-  -e HASURA_GRAPHQL_DATABASE_URL=postgres://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME \
+  -e HASURA_GRAPHQL_DATABASE_URL=postgres://$DB_USER:$DB_PASSWORD@postgres:$DB_PORT/$DB_NAME \
   -e HASURA_GRAPHQL_ENABLE_CONSOLE=false \
   -e HASURA_GRAPHQL_ENABLED_LOG_TYPES=startup,http-log,webhook-log,websocket-log,query-log \
   -e HASURA_GRAPHQL_EXPERIMENTAL_FEATURES=naming_convention \
