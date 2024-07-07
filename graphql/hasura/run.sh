@@ -97,7 +97,10 @@ jq -c '.[]' users.json | while read -r user; do
   phone=$(echo "$user" | jq -r '.phone' | sed "s/'/''/g")
   website=$(echo "$user" | jq -r '.website' | sed "s/'/''/g")
 
-  psql "postgresql://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME" -c "INSERT INTO public.users (id, user_id, name, username, email, phone, website) VALUES ($id, $userId, '$name', '$username', '$email', '$phone', '$website') ON CONFLICT (id) DO NOTHING;"
+  # psql "postgresql://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME" -c "INSERT INTO public.users (id, user_id, name, username, email, phone, website) VALUES ($id, $userId, '$name', '$username', '$email', '$phone', '$website') ON CONFLICT (id) DO NOTHING;"
+docker exec -i postgres psql -U $DB_USER -d $DB_NAME <<EOF
+INSERT INTO public.users (id, user_id, name, username, email, phone, website) VALUES ($id, $userId, '$name', '$username', '$email', '$phone', '$website') ON CONFLICT (id) DO NOTHING;
+EOF
 done
 
 # Insert posts into the database
@@ -107,7 +110,10 @@ jq -c '.[]' posts.json | while read -r post; do
   title=$(echo "$post" | jq -r '.title' | sed "s/'/''/g")
   body=$(echo "$post" | jq -r '.body' | sed "s/'/''/g")
 
-  psql "postgresql://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME" -c "INSERT INTO public.posts (id, user_id, title, body) VALUES ($id, $user_id, '$title', '$body') ON CONFLICT (id) DO NOTHING;"
+  # psql "postgresql://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME" -c "INSERT INTO public.posts (id, user_id, title, body) VALUES ($id, $user_id, '$title', '$body') ON CONFLICT (id) DO NOTHING;"
+docker exec -i postgres psql -U $DB_USER -d $DB_NAME <<EOF
+INSERT INTO public.posts (id, user_id, title, body) VALUES ($id, $user_id, '$title', '$body') ON CONFLICT (id) DO NOTHING;
+EOF
 done
 
 # Clean up temporary files
