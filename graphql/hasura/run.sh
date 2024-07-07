@@ -25,11 +25,15 @@ echo "PostgreSQL is ready!"
 
 echo "$(pwd)/graphql/hasura"
 ls -la $(pwd)/graphql/hasura
+ls -la / 
+ls -la /home 
+ls -la /home/user
+ls -la /usr
 
 docker run -d --name handler \
   -p 4000:4000 \
   -v /home/user/workspace/graphql-benchmarks/graphql/hasura:/var/hasura \
-  node:14 bash -c "cd /var/hasura && ls -la && ls -la / && ls -la /home && npm install && node handler.js"
+  node:14 bash -c "cd /var/hasura && ls -la && npm install && node handler.js"
 
 HANDLER_URL=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' handler)
 HANDLER_URL="http://$HANDLER_URL:4000/greet"
