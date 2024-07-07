@@ -16,7 +16,7 @@ bench1Results=()
 bench2Results=()
 bench3Results=()
 killServerOnPort 3000
-sh nginx/run.sh
+# sh nginx/run.sh
 
 function runBenchmark() {
     killServerOnPort 8000
@@ -84,6 +84,6 @@ for service in "hasura"; do
   fi
 done
 
-bash analyze.sh "${bench1Results[@]}"
-bash analyze.sh "${bench2Results[@]}"
-bash analyze.sh "${bench3Results[@]}"
+# bash analyze.sh "${bench1Results[@]}"
+# bash analyze.sh "${bench2Results[@]}"
+# bash analyze.sh "${bench3Results[@]}"

@@ -2,4 +2,4 @@ actions:
     - name: greet
       definition:
         kind: synchronous
-        handler: http://host.docker.internal:4000/greet
+        handler: http://handler:4000/greet
