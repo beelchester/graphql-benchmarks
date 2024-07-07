@@ -50,6 +50,9 @@ docker run -d --name graphql-engine \
 HASURA_URL=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' graphql-engine)
 echo "Hasura URL: $HASURA_URL"
 
+# debuging why graphql-engine dont have access to handler
+docker network inspect graphql_network
+
 # Create and insert data into PostgreSQL
 psql "postgresql://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME" <<EOF
 CREATE SCHEMA IF NOT EXISTS public;
