@@ -11,6 +11,7 @@ docker rm graphql-engine
 # Stop and remove handler container
 docker stop handler
 docker rm handler
+docker volume rm handler
 
 # Stop and remove pinger container
 docker stop pinger

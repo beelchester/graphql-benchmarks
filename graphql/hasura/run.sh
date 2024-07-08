@@ -26,7 +26,7 @@ echo "PostgreSQL is ready!"
 echo "$(pwd)/graphql/hasura"
 ls -la workspaces/graphql-benchmarks/graphql/hasura
 
-docker run -d --name handler \
+sudo docker run -d --name handler \
   --privileged \
   -p 4000:4000 \
   -v /workspaces/graphql-benchmarks/graphql/hasura:/var/hasura \
