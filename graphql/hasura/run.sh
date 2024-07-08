@@ -26,6 +26,7 @@ echo "PostgreSQL is ready!"
 echo "$(pwd)/graphql/hasura"
 ls -la "$(pwd)/graphql/hasura"
 
+mkdir -p /Users/$(whoami)/hasura
 cp -r "$(pwd)/graphql/hasura" "/Users/$(whoami)/hasura"
 ls -la "/Users/$(whoami)/hasura"
 
