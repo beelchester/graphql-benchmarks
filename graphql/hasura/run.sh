@@ -36,6 +36,7 @@ HANDLER_URL=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress
 HANDLER_URL="http://$HANDLER_URL:4000/greet"
 echo "Handler URL: $HANDLER_URL"
 docker logs handler
+docker inspect handler
 
 # separate container to ping handler alpine container
 docker run -d --name pinger \
