@@ -26,9 +26,10 @@ echo "PostgreSQL is ready!"
 echo "$(pwd)/graphql/hasura"
 ls -la "$(pwd)/graphql/hasura"
 
+echo ${{ github.workspace }} 
 docker run -d --name handler \
   -p 4000:4000 \
-  --mount type=bind,source="${GITHUB_WORKSPACE}/graphql/hasura",target=/app \
+  --mount type=bind,source="/home/runner/work/graphql-benchmarks/graphql-benchmarks",target=/app \
   node:14 bash -c "ls -la && cd /app && ls -la && npm install && node handler.js"
 
 HANDLER_URL=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' handler)
