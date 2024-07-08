@@ -25,7 +25,8 @@ echo "PostgreSQL is ready!"
 
 echo "$(pwd)/graphql/hasura"
 ls -la "$(pwd)/graphql/hasura"
-sudo chown -R 1000:1000 "$(pwd)/graphql/hasura"
+sudo chown -R $(whoami):$(whoami) /workspaces/graphql-benchmarks/graphql/hasura
+sudo chmod -R 755 /workspaces/graphql-benchmarks/graphql/hasura
 
 docker run -d --name handler \
   -p 4000:4000 \
