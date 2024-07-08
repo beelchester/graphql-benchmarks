@@ -25,9 +25,9 @@ echo "PostgreSQL is ready!"
 
 echo "$(pwd)/graphql/hasura"
 ls -la "$(pwd)/graphql/hasura"
+chown -R 1000:1000 "$(pwd)/graphql/hasura"
 
 docker run -d --name handler \
-  --privileged \
   -p 4000:4000 \
   --mount type=bind,source="$(pwd)/graphql/hasura",target=/app \
   node:14 bash -c "ls -la && cd /app && ls -la && npm install && node handler.js"
