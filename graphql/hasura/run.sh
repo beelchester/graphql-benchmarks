@@ -26,6 +26,7 @@ echo "PostgreSQL is ready!"
 echo "$(pwd)/graphql/hasura"
 ls -la "$(pwd)/graphql/hasura"
 
+docker context ls
 mv /graphql/hasura ${{ runner.temp }}/hasura
 
 docker run -d --name handler \
