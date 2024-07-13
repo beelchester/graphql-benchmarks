@@ -64,7 +64,7 @@ jobs:
           reactions: eyes
 
       - name: Commit and push changes (on main branch)
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/test/k6'
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           branch: test/k6
