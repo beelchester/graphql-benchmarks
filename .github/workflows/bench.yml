@@ -46,6 +46,9 @@ jobs:
           tar xvzf ./influxdb2-client-2.7.5-linux-amd64.tar.gz
           sudo cp ./influx /usr/local/bin/
           influx config create --config-name benchmark --host-url $INFLUXDB_URL --org $INFLUXDB_ORG --token $INFLUXDB_TOKEN --active
+          sudo apt-get autoremove openjdk-11-jre
+          sudo apt-get purge openjdk*
+          java -version
           sudo apt install openjdk-17-jdk
           java -version
 
