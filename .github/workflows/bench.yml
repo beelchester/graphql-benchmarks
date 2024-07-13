@@ -47,7 +47,8 @@ jobs:
           sudo cp ./influx /usr/local/bin/
           influx config create --config-name benchmark --host-url $INFLUXDB_URL --org $INFLUXDB_ORG --token $INFLUXDB_TOKEN --active
           echo $JAVA_HOME
-          update-alternatives --set java /usr/lib/jvm/java-17-openjdk-amd64/bin/java
+          sudo apt-get autoremove temurin-11-jdk-amd64
+          sudo apt-get purge temurin*
           echo $JAVA_HOME
           java -version
 
