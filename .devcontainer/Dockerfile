@@ -17,7 +17,11 @@ RUN apt-get update && apt-get install -y \
   postgresql-client \
   && rm -rf /var/lib/apt/lists/*
 
-RUN update-alternatives --set java /usr/lib/jvm/java-17-openjdk-amd64/bin/java
+RUN update-alternatives --set java /usr/lib/jvm/java-17-openjdk-amd64/bin/java && \
+  apt-get autoremove temurin-11-jdk-amd64 && \
+  apt-get purge temurin* && \
+  echo $JAVA_HOME
+
 # Install the latest LTS version of Node.js
 RUN curl -fsSL https://deb.nodesource.com/setup_lts.x | bash - && \
   apt-get install -y nodejs
