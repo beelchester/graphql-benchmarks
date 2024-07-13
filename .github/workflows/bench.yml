@@ -42,9 +42,9 @@ jobs:
         if: github.event_name == 'push' && github.ref == 'refs/heads/test/k6'
         run: |
           echo "UPLOAD_TO_CLOUD=true" >> $GITHUB_ENV
-          wget https://download.influxdata.com/influxdb/releases/influxdb2-client-2.7.5-linux-amd64.tar.gz
-          tar xvzf ./influxdb2-client-2.7.5-linux-amd64.tar.gz
-          sudo cp ./influx /usr/local/bin/
+          wget -P /tmp https://download.influxdata.com/influxdb/releases/influxdb2-client-2.7.5-linux-amd64.tar.gz
+          tar xvzf /tmp/influxdb2-client-2.7.5-linux-amd64.tar.gz -C /tmp
+          sudo cp /tmp/influxdb2-client-2.7.5-linux-amd64/influx /usr/local/bin/
           influx config create --config-name benchmark --host-url $INFLUXDB_URL --org $INFLUXDB_ORG --token $INFLUXDB_TOKEN --active
 
       - name: Run benchmarks
