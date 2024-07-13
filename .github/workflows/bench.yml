@@ -5,7 +5,7 @@ on:
     types: [assigned, opened, synchronize, reopened, edited]
   push:
     branches:
-      - main
+      - test/k6
 
 permissions:
   contents: write
@@ -19,6 +19,9 @@ jobs:
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       K6_CLOUD_API_TOKEN: ${{ secrets.K6_CLOUD_API_TOKEN }}
+      INFLUXDB_TOKEN: ${{ secrets.INFLUXDB_TOKEN }}
+      INFLUXDB_ORG: ${{ secrets.INFLUXDB_ORG }}
+      INFLUXDB_URL: ${{ secrets.INFLUXDB_URL }}
     steps:
       - name: Checkout (GitHub)
         uses: actions/checkout@v4
@@ -35,15 +38,14 @@ jobs:
       - name: Setup k6
         uses: grafana/setup-k6-action@v1
 
-      - name: Setup k6 cloud environment
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      - name: Setup influxdb-cli
+        if: github.event_name == 'push' && github.ref == 'refs/heads/test/k6'
         run: |
-          if [ -z "$K6_CLOUD_API_TOKEN" ]; then
-            echo "K6_CLOUD_API_TOKEN is not set, results will not be uploaded to k6 cloud"
-          else
-            k6 login cloud --token $K6_CLOUD_API_TOKEN
-            echo "IS_K6_CLOUD_ENABLED=true" >> $GITHUB_ENV
-          fi
+          echo "UPLOAD_TO_CLOUD=true" >> $GITHUB_ENV
+          wget https://download.influxdata.com/influxdb/releases/influxdb2-client-2.7.5-linux-amd64.tar.gz
+          tar xvzf ./influxdb2-client-2.7.5-linux-amd64.tar.gz
+          sudo cp ./influx /usr/local/bin/
+          influx config create --config-name benchmark --host-url $INFLUXDB_URL --org $INFLUXDB_ORG --token $INFLUXDB_TOKEN --active
 
       - name: Run benchmarks
         run: |

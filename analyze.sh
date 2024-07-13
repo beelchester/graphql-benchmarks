@@ -41,8 +41,8 @@ for idx in "${!servers[@]}"; do
 done
 
 # Generating data files for gnuplot
-reqSecData="/tmp/reqSec.dat"
-latencyData="/tmp/latency.dat"
+# reqSecData="/tmp/reqSec.dat"
+# latencyData="/tmp/latency.dat"
 
 echo "Server Value" >"$reqSecData"
 for server in "${servers[@]}"; do
@@ -59,35 +59,35 @@ if [[ $1 == bench2* ]]; then
   whichBench=2
 fi
 
-reqSecHistogramFile="req_sec_histogram${whichBench}.png"
-latencyHistogramFile="latency_histogram${whichBench}.png"
+# reqSecHistogramFile="req_sec_histogram${whichBench}.png"
+# latencyHistogramFile="latency_histogram${whichBench}.png"
 
 # Plotting using gnuplot
-gnuplot <<-EOF
-    set term pngcairo size 1280,720 enhanced font "Courier,12"
-    set output "$reqSecHistogramFile"
-    set style data histograms
-    set style histogram cluster gap 1
-    set style fill solid border -1
-    set xtics rotate by -45
-    set boxwidth 0.9
-    set title "Requests/Sec"
-    stats "$reqSecData" using 2 nooutput
-    set yrange [0:STATS_max*1.2]
-    set key outside right top
-    plot "$reqSecData" using 2:xtic(1) title "Req/Sec"
-
-    set output "$latencyHistogramFile"
-    set title "Latency (in ms)"
-    stats "$latencyData" using 2 nooutput
-    set yrange [0:STATS_max*1.2]
-    plot "$latencyData" using 2:xtic(1) title "Latency"
-EOF
-
-# Move PNGs to assets
-mkdir -p assets
-mv $reqSecHistogramFile assets/
-mv $latencyHistogramFile assets/
+# gnuplot <<-EOF
+#     set term pngcairo size 1280,720 enhanced font "Courier,12"
+#     set output "$reqSecHistogramFile"
+#     set style data histograms
+#     set style histogram cluster gap 1
+#     set style fill solid border -1
+#     set xtics rotate by -45
+#     set boxwidth 0.9
+#     set title "Requests/Sec"
+#     stats "$reqSecData" using 2 nooutput
+#     set yrange [0:STATS_max*1.2]
+#     set key outside right top
+#     plot "$reqSecData" using 2:xtic(1) title "Req/Sec"
+#
+#     set output "$latencyHistogramFile"
+#     set title "Latency (in ms)"
+#     stats "$latencyData" using 2 nooutput
+#     set yrange [0:STATS_max*1.2]
+#     plot "$latencyData" using 2:xtic(1) title "Latency"
+# EOF
+#
+# # Move PNGs to assets
+# mkdir -p assets
+# mv $reqSecHistogramFile assets/
+# mv $latencyHistogramFile assets/
 
 # Declare an associative array for server RPS
 declare -A serverRPS
@@ -115,6 +115,11 @@ fi
 for server in "${sortedServers[@]}"; do
     formattedReqSecs=$(printf "%.2f" ${avgReqSecs[$server]} | perl -pe 's/(?<=\d)(?=(\d{3})+(\.\d*)?$)/,/g')
     formattedLatencies=$(printf "%.2f" ${avgLatencies[$server]} | perl -pe 's/(?<=\d)(?=(\d{3})+(\.\d*)?$)/,/g')
+    echo "Writing to influx for $server and $whichBench with ${avgReqSecs[$server]} and ${avgLatencies[$server]}"
+    influx write -b bench "
+    http_reqs,test_name=$server,benchmark=$whichBench value=${avgReqSecs[$server]}
+    latency,test_name=$server,benchmark=$whichBench value=${avgLatencies[$server]}
+    "
     # Calculate the relative performance
     relativePerformance=$(echo "${avgReqSecs[$server]} $lastServerReqSecs" | awk '{printf "%.2f", $1 / $2}')
 
@@ -149,11 +154,22 @@ if [[ $whichBench == 2 ]]; then
     fi
 fi
 
-# Move the generated images to the assets folder
-mv $reqSecHistogramFile assets/
-mv $latencyHistogramFile assets/
-
 # Delete the result TXT files
 for file in "${resultFiles[@]}"; do
   rm "$file"
 done
+
+if [[ $UPLOAD_TO_CLOUD == true ]]; then
+  # Wait for 5 seconds to ensure the results are uploaded to influxdb
+  sleep 5
+
+  # Get rendered panels from grafana
+  from=$(date -u -d "-30 minutes" +"%Y-%m-%dT%H:%M:%S.%3NZ")
+  to=$(date -u -d "+30 minutes" +"%Y-%m-%dT%H:%M:%S.%3NZ")
+  curl -o assets/posts_users_req.png -H "Authorization: Bearer $INFLUXDB_TOKEN" "https://tailcall.grafana.net/render/d-solo/cdqucydulbfggb?tab=queries&from=$from&to=$to&panelId=panel-1&__feature.dashboardSceneSolo&width=1000&height=500&tz=Asia%2FCalcutta" --connect-timeout 120
+  curl -o assets/posts_users_latency.png -H "Authorization: Bearer $INFLUXDB_TOKEN" "https://tailcall.grafana.net/render/d-solo/cdqucydulbfggb?tab=queries&from=$from&to=$to&panelId=panel-2&__feature.dashboardSceneSolo&width=1000&height=500&tz=Asia%2FCalcutta" --connect-timeout 120
+  curl -o assets/posts_req.png -H "Authorization: Bearer $INFLUXDB_TOKEN" "https://tailcall.grafana.net/render/d-solo/cdqucydulbfggb?tab=queries&from=$from&to=$to&panelId=panel-3&__feature.dashboardSceneSolo&width=1000&height=500&tz=Asia%2FCalcutta" --connect-timeout 120
+  curl -o assets/posts_latency.png -H "Authorization: Bearer $INFLUXDB_TOKEN" "https://tailcall.grafana.net/render/d-solo/cdqucydulbfggb?tab=queries&from=$from&to=$to&panelId=panel-4&__feature.dashboardSceneSolo&width=1000&height=500&tz=Asia%2FCalcutta" --connect-timeout 120
+  curl -o assets/greet_req.png -H "Authorization: Bearer $INFLUXDB_TOKEN" "https://tailcall.grafana.net/render/d-solo/cdqucydulbfggb?tab=queries&from=$from&to=$to&panelId=panel-5&__feature.dashboardSceneSolo&width=1000&height=500&tz=Asia%2FCalcutta" --connect-timeout 120
+  curl -o assets/greet_latency.png -H "Authorization: Bearer $INFLUXDB_TOKEN" "https://tailcall.grafana.net/render/d-solo/cdqucydulbfggb?tab=queries&from=$from&to=$to&panelId=panel-6&__feature.dashboardSceneSolo&width=1000&height=500&tz=Asia%2FCalcutta" --connect-timeout 120
+fi

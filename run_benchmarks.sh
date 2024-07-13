@@ -14,6 +14,7 @@ function killServerOnPort() {
 }
 bench1Results=()
 bench2Results=()
+bench3Results=()
 killServerOnPort 3000
 sh nginx/run.sh
 
@@ -57,12 +58,14 @@ function runBenchmark() {
         # 3 benchmark runs
         for resultFile in "${resultFiles[@]}"; do
             echo "Running benchmark $bench for $serviceScript"
-            bash "$benchmarkScript" "$graphqlEndpoint" "upload" "$service" "$bench" > "bench${bench}_${resultFile}"
+            bash "$benchmarkScript" "$graphqlEndpoint" "$service" "$bench" > "bench${bench}_${resultFile}"
             if [ "$bench" == "1" ]; then
                 bench1Results+=("bench1_${resultFile}")
-            else
+              elif [ "$bench" == "2" ]; then
                 bench2Results+=("bench2_${resultFile}")
-            fi
+              else 
+                bench3Results+=("bench3_${resultFile}")
+              fi
         done
     done
 }
@@ -82,3 +85,4 @@ done
 
 bash analyze.sh "${bench1Results[@]}"
 bash analyze.sh "${bench2Results[@]}"
+bash analyze.sh "${bench3Results[@]}"
