@@ -158,18 +158,3 @@ fi
 for file in "${resultFiles[@]}"; do
   rm "$file"
 done
-
-if [[ $UPLOAD_TO_CLOUD == true ]]; then
-  # Wait for 5 seconds to ensure the results are uploaded to influxdb
-  sleep 5
-
-  # Get rendered panels from grafana
-  from=$(date -u -d "-30 minutes" +"%Y-%m-%dT%H:%M:%S.%3NZ")
-  to=$(date -u -d "+30 minutes" +"%Y-%m-%dT%H:%M:%S.%3NZ")
-  curl -o assets/posts_users_req.png -H "Authorization: Bearer $INFLUXDB_TOKEN" "https://tailcall.grafana.net/render/d-solo/cdqucydulbfggb?tab=queries&from=$from&to=$to&panelId=panel-1&__feature.dashboardSceneSolo&width=1000&height=500&tz=Asia%2FCalcutta" --connect-timeout 120
-  curl -o assets/posts_users_latency.png -H "Authorization: Bearer $INFLUXDB_TOKEN" "https://tailcall.grafana.net/render/d-solo/cdqucydulbfggb?tab=queries&from=$from&to=$to&panelId=panel-2&__feature.dashboardSceneSolo&width=1000&height=500&tz=Asia%2FCalcutta" --connect-timeout 120
-  curl -o assets/posts_req.png -H "Authorization: Bearer $INFLUXDB_TOKEN" "https://tailcall.grafana.net/render/d-solo/cdqucydulbfggb?tab=queries&from=$from&to=$to&panelId=panel-3&__feature.dashboardSceneSolo&width=1000&height=500&tz=Asia%2FCalcutta" --connect-timeout 120
-  curl -o assets/posts_latency.png -H "Authorization: Bearer $INFLUXDB_TOKEN" "https://tailcall.grafana.net/render/d-solo/cdqucydulbfggb?tab=queries&from=$from&to=$to&panelId=panel-4&__feature.dashboardSceneSolo&width=1000&height=500&tz=Asia%2FCalcutta" --connect-timeout 120
-  curl -o assets/greet_req.png -H "Authorization: Bearer $INFLUXDB_TOKEN" "https://tailcall.grafana.net/render/d-solo/cdqucydulbfggb?tab=queries&from=$from&to=$to&panelId=panel-5&__feature.dashboardSceneSolo&width=1000&height=500&tz=Asia%2FCalcutta" --connect-timeout 120
-  curl -o assets/greet_latency.png -H "Authorization: Bearer $INFLUXDB_TOKEN" "https://tailcall.grafana.net/render/d-solo/cdqucydulbfggb?tab=queries&from=$from&to=$to&panelId=panel-6&__feature.dashboardSceneSolo&width=1000&height=500&tz=Asia%2FCalcutta" --connect-timeout 120
-fi
