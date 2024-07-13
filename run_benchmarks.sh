@@ -87,8 +87,7 @@ bash analyze.sh "${bench1Results[@]}"
 bash analyze.sh "${bench2Results[@]}"
 bash analyze.sh "${bench3Results[@]}"
 
-# if [[ $UPLOAD_TO_CLOUD == true ]]; then
-echo "upload to cloud is $UPLOAD_TO_CLOUD"
+if [[ "$UPLOAD_TO_CLOUD" == "true" ]]; then
   # Wait for 5 seconds to ensure the results are uploaded to influxdb
   sleep 5
 
@@ -101,4 +100,4 @@ echo "upload to cloud is $UPLOAD_TO_CLOUD"
   curl -o assets/posts_latency.png -H "Authorization: Bearer $GRAFANA_API_KEY" "https://tailcall.grafana.net/render/d-solo/cdqucydulbfggb?tab=queries&from=$from&to=$to&panelId=panel-4&__feature.dashboardSceneSolo&width=1000&height=500&tz=Asia%2FCalcutta" --connect-timeout 120
   curl -o assets/greet_req.png -H "Authorization: Bearer $GRAFANA_API_KEY" "https://tailcall.grafana.net/render/d-solo/cdqucydulbfggb?tab=queries&from=$from&to=$to&panelId=panel-5&__feature.dashboardSceneSolo&width=1000&height=500&tz=Asia%2FCalcutta" --connect-timeout 120
   curl -o assets/greet_latency.png -H "Authorization: Bearer $GRAFANA_API_KEY" "https://tailcall.grafana.net/render/d-solo/cdqucydulbfggb?tab=queries&from=$from&to=$to&panelId=panel-6&__feature.dashboardSceneSolo&width=1000&height=500&tz=Asia%2FCalcutta" --connect-timeout 120
-# fi
+fi
