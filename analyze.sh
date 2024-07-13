@@ -12,16 +12,10 @@ function average() {
 
 declare -A formattedServerNames
 formattedServerNames=(
-  ["tailcall"]="Tailcall"
-  ["gqlgen"]="Gqlgen"
-  ["apollo"]="Apollo GraphQL"
   ["netflixdgs"]="Netflix DGS"
-  ["caliban"]="Caliban"
-  ["async_graphql"]="async-graphql"
-  ["hasura"]="Hasura"
 )
 
-servers=("apollo" "caliban" "netflixdgs" "gqlgen" "tailcall" "async_graphql" "hasura")
+servers=("netflixdgs")
 resultFiles=("$@")
 declare -A avgReqSecs
 declare -A avgLatencies
@@ -115,7 +109,7 @@ fi
 for server in "${sortedServers[@]}"; do
     formattedReqSecs=$(printf "%.2f" ${avgReqSecs[$server]} | perl -pe 's/(?<=\d)(?=(\d{3})+(\.\d*)?$)/,/g')
     formattedLatencies=$(printf "%.2f" ${avgLatencies[$server]} | perl -pe 's/(?<=\d)(?=(\d{3})+(\.\d*)?$)/,/g')
-    echo "Writing to influx for $server and $whichBench with ${avgReqSecs[$server]} and ${avgLatencies[$server]}"
+    echo "Writing to influx for $server and benchmark $whichBench with ${avgReqSecs[$server]} and ${avgLatencies[$server]}"
     influx write -b bench "
     http_reqs,test_name=$server,benchmark=$whichBench value=${avgReqSecs[$server]}
     latency,test_name=$server,benchmark=$whichBench value=${avgLatencies[$server]}

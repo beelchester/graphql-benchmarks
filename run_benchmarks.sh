@@ -23,7 +23,7 @@ function runBenchmark() {
     sleep 5
     local service="$1"
     local serviceScript="graphql/${service}/run.sh"
-    local benchmarks=(1 2)
+    local benchmarks=(2)
 
   if [[ "$service" == "hasura" ]]; then
     bash "$serviceScript" # Run synchronously without background process
@@ -72,7 +72,7 @@ function runBenchmark() {
 
 rm "results.md"
 
-for service in "apollo_server" "caliban" "netflix_dgs" "gqlgen" "tailcall" "async_graphql" "hasura"; do
+for service in "netflix_dgs"; do
     runBenchmark "$service"
     if [ "$service" == "apollo_server" ]; then
         cd graphql/apollo_server/
@@ -87,7 +87,8 @@ bash analyze.sh "${bench1Results[@]}"
 bash analyze.sh "${bench2Results[@]}"
 bash analyze.sh "${bench3Results[@]}"
 
-if [[ $UPLOAD_TO_CLOUD == true ]]; then
+# if [[ $UPLOAD_TO_CLOUD == true ]]; then
+echo "upload to cloud is $UPLOAD_TO_CLOUD"
   # Wait for 5 seconds to ensure the results are uploaded to influxdb
   sleep 5
 
@@ -100,4 +101,4 @@ if [[ $UPLOAD_TO_CLOUD == true ]]; then
   curl -o assets/posts_latency.png -H "Authorization: Bearer $GRAFANA_API_KEY" "https://tailcall.grafana.net/render/d-solo/cdqucydulbfggb?tab=queries&from=$from&to=$to&panelId=panel-4&__feature.dashboardSceneSolo&width=1000&height=500&tz=Asia%2FCalcutta" --connect-timeout 120
   curl -o assets/greet_req.png -H "Authorization: Bearer $GRAFANA_API_KEY" "https://tailcall.grafana.net/render/d-solo/cdqucydulbfggb?tab=queries&from=$from&to=$to&panelId=panel-5&__feature.dashboardSceneSolo&width=1000&height=500&tz=Asia%2FCalcutta" --connect-timeout 120
   curl -o assets/greet_latency.png -H "Authorization: Bearer $GRAFANA_API_KEY" "https://tailcall.grafana.net/render/d-solo/cdqucydulbfggb?tab=queries&from=$from&to=$to&panelId=panel-6&__feature.dashboardSceneSolo&width=1000&height=500&tz=Asia%2FCalcutta" --connect-timeout 120
-fi
+# fi
