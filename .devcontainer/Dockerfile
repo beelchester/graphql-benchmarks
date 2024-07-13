@@ -17,6 +17,7 @@ RUN apt-get update && apt-get install -y \
   postgresql-client \
   && rm -rf /var/lib/apt/lists/*
 
+RUN update-alternatives --set java /usr/lib/jvm/java-17-openjdk-amd64/bin/java
 # Install the latest LTS version of Node.js
 RUN curl -fsSL https://deb.nodesource.com/setup_lts.x | bash - && \
   apt-get install -y nodejs
