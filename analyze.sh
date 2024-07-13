@@ -12,10 +12,10 @@ function average() {
 
 declare -A formattedServerNames
 formattedServerNames=(
-  ["netflixdgs"]="Netflix DGS"
+  ["tailcall"]="Tailcall"
 )
 
-servers=("netflixdgs")
+servers=("tailcall")
 resultFiles=("$@")
 declare -A avgReqSecs
 declare -A avgLatencies
