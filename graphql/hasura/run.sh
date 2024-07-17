@@ -23,6 +23,10 @@ until docker exec postgres pg_isready -U $DB_USER -d $DB_NAME -h $DB_HOST; do
 done
 echo "PostgreSQL is ready!"
 
+ip addr show
+echo "DOCKER_HOST IP:"
+ip addr show | grep "\binet\b.*\bdocker0\b" | awk '{print $2}' | cut -d '/' -f 1
+
 docker run -d --name handler \
   -p 4000:4000 \
   --add-host=host.docker.internal:host-gateway \
