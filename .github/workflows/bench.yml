@@ -5,7 +5,7 @@ on:
     types: [assigned, opened, synchronize, reopened, edited]
   push:
     branches:
-      - main
+      - test/hasura_implementation
 
 permissions:
   contents: write
@@ -14,7 +14,7 @@ permissions:
 
 jobs:
   build:
-    runs-on: benchmarking-runner
+    runs-on: ubuntu-latest
     if: github.event.head_commit.message != 'Update performance results in README.md'
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -46,9 +46,9 @@ jobs:
           reactions: eyes
 
       - name: Commit and push changes (on main branch)
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/test/hasura_implementation'
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          branch: main
+          branch: test/hasura_implementation
           commit_author: Author <actions@github.com>
           commit_message: "Update performance results in README.md"
