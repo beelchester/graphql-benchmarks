@@ -46,5 +46,6 @@ HASURA_URL=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}
 
 # Apply Hasura metadata
 cd ./graphql/hasura
-hasura metadata apply --endpoint http://$HASURA_URL:8080
+npx hasura metadata apply --endpoint http://$HASURA_URL:8080
+echo "Hasura metadata applied!"
 cd ../..
