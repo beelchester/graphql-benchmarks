@@ -21,7 +21,7 @@ async function batchUsers(usersIds) {
       {
         proxy: {
           protocol: "http",
-          host: "127.0.0.1",
+          host: "host.docker.internal",
           port: 3000,
         },
       },
@@ -42,7 +42,7 @@ app.post('/posts', async (req, res) => {
     const response = await axiosInstance.get('http://jsonplaceholder.typicode.com/posts', {
       proxy: {
         protocol: "http",
-        host: "127.0.0.1",
+        host: "host.docker.internal",
         port: 3000,
       },
     });

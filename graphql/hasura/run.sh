@@ -25,6 +25,7 @@ echo "PostgreSQL is ready!"
 
 docker run -d --name handler \
   -p 4000:4000 \
+  --add-host=host.docker.internal:host-gateway \
   --mount type=bind,source="/home/runner/work/graphql-benchmarks/graphql-benchmarks/graphql/hasura",target=/app \
   node:14 bash -c "cd /app && npm install && node handler.js"
 
