@@ -28,7 +28,7 @@ echo "DOCKER_HOST IP:"
 ip addr show | grep "\binet\b.*\bdocker0\b" | awk '{print $2}' | cut -d '/' -f 1
 
 docker run -d --name handler \
-  -p 4000:4000 \
+  --network host \
   --add-host=host.docker.internal:host-gateway \
   --mount type=bind,source="/home/runner/work/graphql-benchmarks/graphql-benchmarks/graphql/hasura",target=/app \
   node:14 bash -c "cd /app && npm install && node handler.js"
