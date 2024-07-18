@@ -44,8 +44,10 @@ docker run -d --name graphql-engine \
   --network host \
   hasura/graphql-engine:v2.40.0
 
+HASURA_URL=127.0.0.1
+HASURA_URL="http://$HASURA_URL:8080"
+
 # Apply Hasura metadata
 cd ./graphql/hasura
-npx hasura metadata apply
-echo "Hasura metadata applied!"
+npx hasura metadata apply --endpoint $HASURA_URL
 cd ../..
