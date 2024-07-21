@@ -34,7 +34,7 @@ function runBenchmark() {
   sleep 15 # Give some time for the service to start up
 
   local graphqlEndpoint="http://localhost:8000/graphql"
-  if [[ "$serviceScript" == *"hasura"* ]]; then
+  if [[ "$service" == "hasura" ]]; then
     graphqlEndpoint=http://127.0.0.1:8080/v1/graphql
   fi
 
