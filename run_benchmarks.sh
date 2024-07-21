@@ -34,8 +34,8 @@ function runBenchmark() {
   sleep 15 # Give some time for the service to start up
 
   local graphqlEndpoint="http://localhost:8000/graphql"
-  if [[ "$service" == "hasura" ]]; then
-    graphqlEndpoint=http://$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' graphql-engine):8080/v1/graphql
+  if [[ "$serviceScript" == *"hasura"* ]]; then
+    graphqlEndpoint=http://127.0.0.1:8080/v1/graphql
   fi
 
   for bench in "${benchmarks[@]}"; do
