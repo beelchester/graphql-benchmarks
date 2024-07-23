@@ -35,21 +35,10 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           ref: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.sha || github.sha }}
 
-      - name: Setup devcontainer
-        run: |
-          if [[ "${{ matrix.service }}" == "hasura" || 
-                "${{ matrix.service }}" == "gqlgen" || 
-                "${{ matrix.service }}" == "caliban" || 
-                "${{ matrix.service }}" == "netflix_dgs" ]]; then
-                echo "DOCKERFILEPATH=.devcontainer/dockerfiles/Dockerfile.${{ matrix.service }}" >> $GITHUB_ENV
-          else
-                echo "DOCKERFILEPATH=.devcontainer/dockerfiles/Dockerfile.base" >> $GITHUB_ENV
-          fi
-
       - name: Build devcontainer and run setup and benchmark
         uses: devcontainers/ci@v0.3
         env:
-          DOCKERFILEPATH: ${{ env.DOCKERFILEPATH }}
+          SERVICE: ${{ matrix.service }}
         with:
           imageName: graphql-benchmarks-{{ matrix.service }}
           push: never
