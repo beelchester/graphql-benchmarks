@@ -4,7 +4,7 @@ on:
     types: [assigned, opened, synchronize, reopened, edited]
   push:
     branches:
-      - main
+      - test/k6_ci_parallel
 permissions:
   contents: write
   pull-requests: write
@@ -49,7 +49,7 @@ jobs:
         uses: grafana/setup-k6-action@v1
 
       - name: Setup influxdb-cli
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/test/k6_ci_parallel'
         run: |
           echo "UPLOAD_TO_CLOUD=true" >> $GITHUB_ENV
           mkdir -p influxdb
@@ -106,9 +106,9 @@ jobs:
           reactions: eyes
 
       - name: Commit and push changes (on main branch)
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/test/k6_ci_parallel'
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          branch: main
+          branch: test/k6_ci_parallel
           commit_author: Author <actions@github.com>
           commit_message: "[ci skip] update performance results in README.md"
