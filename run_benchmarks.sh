@@ -17,7 +17,7 @@ bench1Results=()
 bench2Results=()
 bench3Results=()
 killServerOnPort 3000
-sh nginx/run.sh
+sudo sh nginx/run.sh
 
 function runBenchmark() {
     killServerOnPort 8000
