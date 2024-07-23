@@ -1,13 +1,106 @@
-name: "Test Push Trigger"
+name: "Run benchmark"
 on:
+  pull_request_target:
+    types: [assigned, opened, synchronize, reopened, edited]
   push:
     branches:
       - test/optimise_ci
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
 jobs:
-  test:
+  build:
+    runs-on: ubuntu-latest
+    if: github.event.head_commit.message != 'Update performance results in README.md'
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    strategy:
+      matrix:
+        service:
+          [
+            apollo_server,
+            caliban,
+            netflix_dgs,
+            gqlgen,
+            tailcall,
+            async_graphql,
+            hasura,
+            graphql_jit,
+          ]
+    steps:
+      - name: Checkout (GitHub)
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          ref: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.sha || github.sha }}
+
+      - name: Setup devcontainer
+        run: |
+          if [[ "${{ matrix.service }}" == "hasura" || 
+                "${{ matrix.service }}" == "gqlgen" || 
+                "${{ matrix.service }}" == "caliban" || 
+                "${{ matrix.service }}" == "netflix_dgs" ]]; then
+                echo "DOCKERFILEPATH=.devcontainer/dockerfiles/Dockerfile.${{ matrix.service }}" >> $GITHUB_ENV
+          else
+                echo "DOCKERFILEPATH=.devcontainer/dockerfiles/Dockerfile.base" >> $GITHUB_ENV
+          fi
+
+      - name: Build devcontainer and run setup and benchmark
+        uses: devcontainers/ci@v0.3
+        with:
+          imageName: graphql-benchmarks-{{ matrix.service }}
+          dockerfile: ${{ env.DOCKERFILEPATH }}
+          push: never
+          runCmd: |
+            bash ./graphql/${{ matrix.service }}/setup.sh
+            bash run_benchmarks.sh ${{ matrix.service }}
+
+      - name: List benchmark files
+        run: |
+          ls -la bench*.txt || echo "No matching files found"
+
+      - name: Upload benchmark results
+        uses: actions/upload-artifact@v3
+        with:
+          name: benchmark-results
+          path: bench*.txt
+
+  analyze:
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout (GitHub)
         uses: actions/checkout@v4
-      - name: Print Branch
-        run: echo "Triggered on branch: ${{ github.ref }}"
+
+      - name: Download all benchmark results
+        uses: actions/download-artifact@v3
+        with:
+          name: benchmark-results
+          path: .
+
+      - name: List downloaded artifacts
+        run: ls -la bench*.txt || echo "No matching files found"
+
+      - name: Analyze results
+        run: |
+          bash run_analyze_script.sh
+
+      - name: Print benchmark results
+        run: cat ./results.md
+
+      - name: Comment benchmark results on PR
+        if: github.event_name == 'pull_request_target'
+        uses: peter-evans/commit-comment@v3
+        with:
+          sha: ${{ github.event.pull_request.head.sha }}
+          body-path: "results.md"
+          reactions: eyes
+
+      - name: Commit and push changes (on test/optimise_ci branch)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/test/optimise_ci'
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          branch: test/optimise_ci
+          commit_author: Author <actions@github.com>
+          commit_message: "[ci skip] update performance results in README.md"
