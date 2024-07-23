@@ -1,0 +1,5 @@
+FROM base AS base
+
+# Install Go
+RUN wget https://dl.google.com/go/go1.21.1.linux-amd64.tar.gz -O- | tar xz -C /usr/local
+ENV PATH=$PATH:/usr/local/go/bin
