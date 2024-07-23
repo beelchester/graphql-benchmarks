@@ -50,7 +50,8 @@ jobs:
         uses: devcontainers/ci@v0.3
         with:
           imageName: graphql-benchmarks-{{ matrix.service }}
-          dockerfile: ${{ env.DOCKERFILEPATH }}
+          env:
+            DOCKERFILEPATH: ${{ env.DOCKERFILEPATH }}
           push: never
           runCmd: |
             bash ./graphql/${{ matrix.service }}/setup.sh
