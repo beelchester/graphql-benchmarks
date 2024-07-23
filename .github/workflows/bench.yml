@@ -40,7 +40,7 @@ jobs:
         env:
           SERVICE: ${{ matrix.service }}
         with:
-          imageName: graphql-benchmarks-{{ matrix.service }}
+          imageName: graphql-benchmarks
           push: never
           runCmd: |
             bash ./graphql/${{ matrix.service }}/setup.sh
