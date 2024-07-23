@@ -26,6 +26,8 @@ function runBenchmark() {
     local serviceScript="graphql/${service}/run.sh"
     local benchmarks=(1 2 3)
 
+    echo "Running benchmark for $serviceScript, service: $service"
+
   if [[ "$service" == "hasura" ]]; then
     bash "$serviceScript" # Run synchronously without background process
   else
