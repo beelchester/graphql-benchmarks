@@ -93,7 +93,7 @@ fi
 
 
 
-runBenchmark "graphql/${service}/run.sh"
+runBenchmark "${service}"
     
 if [ "$service" == "apollo_server" ]; then
     cd graphql/apollo_server/
@@ -102,10 +102,6 @@ if [ "$service" == "apollo_server" ]; then
 elif [ "$service" == "hasura" ]; then
     bash "graphql/hasura/kill.sh"
 fi
-
-bash analyze.sh "${bench1Results[@]}"
-bash analyze.sh "${bench2Results[@]}"
-bash analyze.sh "${bench3Results[@]}"
 
 if [[ "$UPLOAD_TO_CLOUD" == "true" ]]; then
   # Wait for 5 seconds to ensure the results are uploaded to influxdb
