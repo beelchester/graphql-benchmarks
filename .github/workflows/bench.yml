@@ -4,14 +4,14 @@ on:
     types: [assigned, opened, synchronize, reopened, edited]
   push:
     branches:
-      - main
+      - test/optimise_ci
 permissions:
   contents: write
   pull-requests: write
   issues: write
 jobs:
   build:
-    runs-on: benchmarking-runner
+    runs-on: ubuntu-latest
     if: github.event.head_commit.message != 'Update performance results in README.md'
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -68,7 +68,7 @@ jobs:
 
   analyze:
     needs: build
-    runs-on: benchmarking-runner
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout (GitHub)
         uses: actions/checkout@v4
@@ -97,10 +97,10 @@ jobs:
           body-path: "results.md"
           reactions: eyes
 
-      - name: Commit and push changes (on main branch)
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      - name: Commit and push changes (on test/optimise_ci branch)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/test/optimise_ci'
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          branch: main
+          branch: test/optimise_ci
           commit_author: Author <actions@github.com>
           commit_message: "[ci skip] update performance results in README.md"
