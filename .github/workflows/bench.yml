@@ -48,10 +48,10 @@ jobs:
 
       - name: Build devcontainer and run setup and benchmark
         uses: devcontainers/ci@v0.3
+        env:
+          DOCKERFILEPATH: ${{ env.DOCKERFILEPATH }}
         with:
           imageName: graphql-benchmarks-{{ matrix.service }}
-          env:
-            DOCKERFILEPATH: ${{ env.DOCKERFILEPATH }}
           push: never
           runCmd: |
             bash ./graphql/${{ matrix.service }}/setup.sh
