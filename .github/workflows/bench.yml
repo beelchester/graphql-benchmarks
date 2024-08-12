@@ -89,6 +89,6 @@ jobs:
         if: github.event_name == 'push' && github.ref == 'refs/heads/fix/hasura_pm2'
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          branch: main
+          branch: fix/hasura_pm2
           commit_author: Author <actions@github.com>
           commit_message: "[ci skip] update performance results in README.md"
