@@ -56,7 +56,7 @@ jobs:
 
   analyze:
     needs: build
-    runs-on: benchmarking-runner
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout (GitHub)
         uses: actions/checkout@v4
