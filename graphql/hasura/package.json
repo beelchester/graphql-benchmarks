@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "pm2 start handler.js -i max",
+    "start": "PORT=4000 pm2 start handler.js -i max",
     "stop": "pm2 stop handler"
   },
   "dependencies": {
